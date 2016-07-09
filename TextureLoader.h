@@ -9,7 +9,8 @@ extern unsigned char * loadBMPRaw(const char * filename,
 	int flipY, int flipToBGR);
 
 extern int dumpBMPRaw(const char *filename,
-	unsigned char * data, unsigned int width, unsigned int height);
+	unsigned char * data, unsigned int width, unsigned int height, 
+	int flipY);
 
 #ifdef __cplusplus
 }

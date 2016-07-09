@@ -1,11 +1,16 @@
 #include "common.h"
 
 #include <SDL_video.h>
+#include <SDL_ttf.h>
 #include <malloc.h>
+#include <string.h>
 #include <stdio.h>
 #include "TextureLoader.h"
 #include "test.h"
 
+#define DEFAULT_FONTNAME "default.ttf"
+#define DEFAULT_PTSIZE	18
+#define DEFAULT_TEXT	"The quick brown fox jumped over the lazy dog"
 
 void test_bmp(SDL_Surface* screen)
 {
@@ -82,3 +87,61 @@ void test_bmp(SDL_Surface* screen)
 	}
 }
 
+void test_ttf(SDL_Surface* screen)
+{
+	TTF_Font *font;
+	const char *fontname = DEFAULT_FONTNAME;
+	int ptsize = DEFAULT_PTSIZE;
+	int renderstyle = TTF_STYLE_NORMAL; 
+	int i;
+	SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };
+	SDL_Color black = { 0x00, 0x00, 0x00, 0 };
+	SDL_Color *forecol = &black;
+	SDL_Color *backcol = &white;
+	
+	TTF_Init();
+	font = TTF_OpenFont(fontname, ptsize);
+	if (font == NULL) {
+		fprintf(stderr, "Couldn't load %d pt font from %s\n", 
+			ptsize, fontname);
+		goto clean_end;
+	}
+	TTF_SetFontStyle(font, renderstyle);
+	//48-57 : 0-9
+	//58-64 : :;<=>?@
+	//65-90 : A-Z
+	//91-96 : [\]^-'
+	//97-122: a-z
+	for (i = 48; i < 123; i++) {
+		SDL_Surface* glyph = NULL;
+		char outname[64];
+		SDL_Surface *glyph2 = NULL;
+		int j;
+			
+		glyph = TTF_RenderGlyph_Blended(font, (uint16_t)i, *forecol, *backcol);
+		if (glyph) {
+			int size = glyph->w * glyph->h * 3;
+			unsigned char * data = (unsigned char *)malloc(size);
+			memset(data, 0, size);
+			for (j = 0; j < glyph->w * glyph->h; j++)
+			{
+				unsigned char * p = (unsigned char *)glyph->pixels;
+				*(data + j * 3 + 0) = 255 - *(p + j * 4 + 3);
+				*(data + j * 3 + 1) = 255 - *(p + j * 4 + 3);
+				*(data + j * 3 + 2) = 255 - *(p + j * 4 + 3);
+			}
+			glyph2 = SDL_CreateRGBSurfaceFrom(data,
+				glyph->w, glyph->h, 24, 3 * glyph->w,
+				MY_Rmask, MY_Gmask, MY_Bmask, MY_Amask
+				);
+
+			sprintf(outname, "output/glyph-%d.bmp", i);
+			//SDL_SaveBMP(glyph, outname);
+			dumpBMPRaw(outname, glyph2->pixels, glyph2->w, glyph2->h, 1);
+			SDL_FreeSurface(glyph2);
+			free(data);
+		}
+	}
+clean_end:
+	TTF_Quit();
+}

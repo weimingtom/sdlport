@@ -70,7 +70,7 @@ void display(void)
 	
 	SDL_LockSurface(screen);
 	//dumpBMPRaw("image1_out.bmp", screen->pixels, screen->w, screen->h);
-	//É«Éî
+	//color depth
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
 		screen->w, screen->h, 0, GL_RGB, GL_UNSIGNED_BYTE, 
 		screen->pixels);
@@ -310,7 +310,8 @@ void init()
 		640, 480, 24,
 		MY_Rmask, MY_Gmask, MY_Bmask, MY_Amask
 		);
-	test_bmp(screen);
+	//test_bmp(screen);
+	test_ttf(screen);
 }
 
 void run(int argc, char **argv)

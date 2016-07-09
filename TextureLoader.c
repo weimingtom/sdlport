@@ -147,19 +147,26 @@ unsigned char * loadBMPRaw(const char * filename,
 }
 
 int dumpBMPRaw(const char *filename,
-	unsigned char * data, unsigned int width, unsigned int height)
+	unsigned char * data, unsigned int width, unsigned int height, int flipY)
 {
 	FILE *fp = NULL;
 	unsigned int imagesize = 0;
 	unsigned int filesize = 0;
 	unsigned char header[54] = {0};
+	unsigned int zeroByteSize = 0;
 
 	if (!filename)
 	{
 		fprintf(stderr, "filename is NULL\n"); 
 		return 0;
 	}
-	imagesize = width * height * 3;
+	zeroByteSize = 4 - ((width * 3) % 4);
+	if (zeroByteSize == 4)
+	{
+		zeroByteSize = 0;
+	}
+	imagesize = (width * 3 + zeroByteSize) * height;
+
 	filesize = imagesize + 56;
 	header[0] = 0x42; // 'B'
 	header[1] = 0x4D; // 'M'
@@ -200,11 +207,52 @@ int dumpBMPRaw(const char *filename,
 		fclose(fp);
 		return 1;	
 	}
-	if (imagesize != fwrite(data, 1, imagesize, fp))
+	if (flipY == 0 && zeroByteSize == 0)
 	{
-		fprintf(stderr, "Write output bmp file pixels error\n");
-		fclose(fp);
-		return 1;
+		if (imagesize != fwrite(data, 1, imagesize, fp))
+		{
+			fprintf(stderr, "Write output bmp file pixels error\n");
+			fclose(fp);
+			return 1;
+		}
+	}
+	else
+	{
+		unsigned int i;
+		unsigned char * p = data;
+		unsigned char pZero[] = {0x0, 0x0, 0x0, 0x0};
+
+		if (flipY)
+		{
+			p = data + (height - 1) * width * 3;
+		}
+		for (i = 0; i < height; i++)
+		{
+			unsigned int linesize = width * 3;
+			if (linesize != fwrite(p, 1, linesize, fp))
+			{
+				fprintf(stderr, "Write output bmp file pixels error\n");
+				fclose(fp);
+				return 1;
+			}
+			if (!flipY)
+			{
+				p += linesize;
+			}
+			else
+			{
+				p -= linesize;
+			}
+			if (zeroByteSize > 0)
+			{
+				if (zeroByteSize != fwrite(pZero, 1, zeroByteSize, fp))
+				{
+					fprintf(stderr, "Write output bmp file pixels error\n");
+					fclose(fp);
+					return 1;
+				}
+			}
+		}
 	}
 	fclose(fp);
 	return 0;
