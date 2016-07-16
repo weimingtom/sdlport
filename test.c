@@ -2,6 +2,7 @@
 
 #include <SDL_video.h>
 #include <SDL_ttf.h>
+#include <SDL_image.h>
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
@@ -118,7 +119,8 @@ void test_ttf(SDL_Surface* screen)
 		SDL_Surface *glyph2 = NULL;
 		int j;
 			
-		glyph = TTF_RenderGlyph_Blended(font, (uint16_t)i, *forecol, *backcol);
+		//, *backcol
+		glyph = TTF_RenderGlyph_Blended(font, (uint16_t)i, *forecol);
 		if (glyph) {
 			int size = glyph->w * glyph->h * 3;
 			unsigned char * data = (unsigned char *)malloc(size);
@@ -145,3 +147,58 @@ void test_ttf(SDL_Surface* screen)
 clean_end:
 	TTF_Quit();
 }
+
+void image_swap_rgb(SDL_Surface *screen)
+{
+    uint8_t *dst = screen->pixels;
+    int x, y;
+    int bpp = screen->format->BytesPerPixel;
+	for (y = 0; y < screen->h; y++) {
+		for (x = 0; x < screen->w; x++) {
+	    switch (bpp) {
+			case 1:
+				//FIXME:
+				break;
+
+			case 2:
+				//FIXME:
+				break;
+
+			case 3:
+				//dst[x * 3] = (uint8)(c);
+				{
+					uint8_t temp = dst[x * 3 + 0];
+					dst[x * 3 + 0] = dst[x * 3 + 2];
+					dst[x * 3 + 2] = temp;
+				}
+				break;
+
+			case 4:
+				//FIXME:
+				break;
+			}
+		}
+		dst += screen->pitch;
+    }
+}
+
+void test_image(SDL_Surface* screen)
+{
+	SDL_Surface* surface = IMG_Load("image1.bmp");	
+	SDL_Rect sr, ds;
+	if (surface)
+	{
+		image_swap_rgb(surface);
+		sr.x = 0;
+		sr.y = 0;
+		sr.w = surface->w;
+		sr.h = surface->h;
+		
+		ds.x = 100;
+		ds.y = 100;
+		ds.w = surface->w;
+		ds.h = surface->h;
+		SDL_SoftStretch(surface, &sr, screen, &ds);
+	}
+}
+

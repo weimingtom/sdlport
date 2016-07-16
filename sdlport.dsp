@@ -183,6 +183,14 @@ SOURCE=.\sdl\SDL_ext_pixel.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sdl\SDL_image.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\sdl\SDL_image.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\sdl\SDL_surface.c
 # End Source File
 # Begin Source File

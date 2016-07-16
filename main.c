@@ -311,7 +311,8 @@ void init()
 		MY_Rmask, MY_Gmask, MY_Bmask, MY_Amask
 		);
 	//test_bmp(screen);
-	test_ttf(screen);
+	//test_ttf(screen);
+	test_image(screen);
 }
 
 void run(int argc, char **argv)
