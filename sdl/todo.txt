@@ -1,0 +1,22 @@
+SDL_ENOMEM
+
+void SDL_MixAudio (Uint8 *dst, const Uint8 *src, Uint32 len, int volume)
+{
+	Uint16 format;
+
+	if ( volume == 0 ) {
+		return;
+	}
+	/* Mix the user-level audio format */
+	if ( current_audio ) {
+->convert		if ( current_audio->convert.needed ) {
+			format = current_audio->convert.src_format;
+		} else {
+			format = current_audio->spec.format;
+		}
+	} else {
+  		/* HACK HACK HACK */
+		format = AUDIO_S16;
+	}
+	
+	

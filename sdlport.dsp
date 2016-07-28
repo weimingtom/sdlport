@@ -87,7 +87,27 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=.\effect_position.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\effect_stereoreverse.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\effects_internal.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\main.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\mixer.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\music.c
 # End Source File
 # Begin Source File
 
@@ -96,6 +116,10 @@ SOURCE=.\test.c
 # Begin Source File
 
 SOURCE=.\TextureLoader.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\wavestream.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -107,11 +131,23 @@ SOURCE=.\common.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\effects_internal.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\SDL_mixer.h
+# End Source File
+# Begin Source File
+
 SOURCE=.\test.h
 # End Source File
 # Begin Source File
 
 SOURCE=.\TextureLoader.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\wavestream.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

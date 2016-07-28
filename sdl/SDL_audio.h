@@ -82,6 +82,13 @@ extern void SDL_LockAudio(void);
 extern void SDL_UnlockAudio(void);
 extern void SDL_CloseAudio(void);
 
+
+//============================
+//from SDL_audio.h, SDL_mixer.c
+
+#define SDL_MIX_MAXVOLUME 128
+extern void SDL_MixAudio(uint8_t *dst, const uint8_t *src, uint32_t len, int volume);
+
 #ifdef __cplusplus
 }
 #endif
