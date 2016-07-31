@@ -3,6 +3,8 @@
 #include <SDL_video.h>
 #include <SDL_ttf.h>
 #include <SDL_image.h>
+#include <SDL_mixer.h>
+#include <SDL_timer.h>
 #include <malloc.h>
 #include <string.h>
 #include <stdio.h>
@@ -12,6 +14,8 @@
 #define DEFAULT_FONTNAME "default.ttf"
 #define DEFAULT_PTSIZE	18
 #define DEFAULT_TEXT	"The quick brown fox jumped over the lazy dog"
+
+#define DEFAULT_WAVNAME "shiro.wav"
 
 void test_bmp(SDL_Surface* screen)
 {
@@ -202,3 +206,68 @@ void test_image(SDL_Surface* screen)
 	}
 }
 
+static int audio_open = 0;
+static Mix_Music *music = NULL;
+static int next_track = 0;
+
+void CleanUp(int exitcode)
+{
+	if (Mix_PlayingMusic()) {
+		Mix_FadeOutMusic(1500);
+		SDL_Delay(1500);
+	}
+	if (music) {
+		Mix_FreeMusic(music);
+		music = NULL;
+	}
+	if (audio_open) {
+		Mix_CloseAudio();
+		audio_open = 0;
+	}
+}
+
+void test_wav()
+{
+	int audio_rate;
+	uint16_t audio_format;
+	int audio_channels;
+	int audio_buffers;
+	int audio_volume = MIX_MAX_VOLUME;
+	int looping = 0;
+	int interactive = 0;
+	
+	audio_rate = 22050;
+	audio_format = AUDIO_S16;
+	audio_channels = 2;
+	audio_buffers = 4096;
+
+	if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) < 0) {
+		fprintf(stderr, "Couldn't open audio\n");
+		return;
+	} else {
+		Mix_QuerySpec(&audio_rate, &audio_format, &audio_channels);
+		printf("Opened audio at %d Hz %d bit %s (%s), %d bytes audio buffer\n", audio_rate,
+			(audio_format&0xFF),
+			(audio_channels > 2) ? "surround" : (audio_channels > 1) ? "stereo" : "mono", 
+			(audio_format&0x1000) ? "BE" : "LE",
+			audio_buffers );
+	}
+	audio_open = 1;
+
+	Mix_VolumeMusic(audio_volume);
+
+	music = Mix_LoadMUS(DEFAULT_WAVNAME);
+	if (music == NULL) {
+		fprintf(stderr, "Couldn't load %s\n", DEFAULT_WAVNAME);
+		CleanUp(2);
+		return;
+	}
+	printf("Playing %s\n", DEFAULT_WAVNAME);
+	Mix_FadeInMusic(music, looping, 2000);
+	while ((Mix_PlayingMusic() || Mix_PausedMusic())) {
+		SDL_Delay(100);
+	}
+	Mix_FreeMusic(music);
+	music = NULL;
+	SDL_Delay(500);
+}

@@ -1,8 +1,11 @@
 #include "common.h"
 
+#include <pthread.h>
 #include <stdio.h>
+#include <string.h>
 #include <GL/glut.h>
 #include "SDL_video.h"
+#include "SDL_audio.h"
 #include "test.h"
 
 #define TIMER_MILLIS ((int)(1000 / 60))
@@ -272,6 +275,21 @@ void menu(int value)
 	glutPostRedisplay();
 }
 
+static int decode_thread(void *arg) 
+{
+	fprintf(stderr, "%s\n", "decode_thread start...");
+	
+	test_wav();
+	
+	fprintf(stderr, "%s\n", "decode_thread end...");
+	return 0;
+}
+
+void *decodeThread(void *data)
+{
+	decode_thread(data);
+	return NULL;
+}
 
 void createMenu(void)
 {
@@ -313,6 +331,21 @@ void init()
 	//test_bmp(screen);
 	//test_ttf(screen);
 	test_image(screen);
+	if (SDL_AudioInit(NULL) < 0) 
+	{
+		fprintf(stderr, "Could not initialize SDL audio\n");
+	}
+	else
+	{
+		pthread_t tid;
+		int err;
+		err = pthread_create(&tid, NULL, decodeThread, NULL);
+		if (err!=0)
+		{
+			printf("can't create thread: %s\n", strerror(err));
+			exit(0);
+		}
+	}
 }
 
 void run(int argc, char **argv)

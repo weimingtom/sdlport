@@ -87,27 +87,7 @@ LINK32=link.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=.\effect_position.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\effect_stereoreverse.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\effects_internal.c
-# End Source File
-# Begin Source File
-
 SOURCE=.\main.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\mixer.c
-# End Source File
-# Begin Source File
-
-SOURCE=.\music.c
 # End Source File
 # Begin Source File
 
@@ -117,10 +97,6 @@ SOURCE=.\test.c
 
 SOURCE=.\TextureLoader.c
 # End Source File
-# Begin Source File
-
-SOURCE=.\wavestream.c
-# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -128,10 +104,6 @@ SOURCE=.\wavestream.c
 # Begin Source File
 
 SOURCE=.\common.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\effects_internal.h
 # End Source File
 # Begin Source File
 
@@ -144,10 +116,6 @@ SOURCE=.\test.h
 # Begin Source File
 
 SOURCE=.\TextureLoader.h
-# End Source File
-# Begin Source File
-
-SOURCE=.\wavestream.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
@@ -199,6 +167,18 @@ SOURCE=.\sdl\SDL_blit_N.c
 # End Source File
 # Begin Source File
 
+SOURCE=.\sdl\SDL_effect_position.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\sdl\SDL_effect_stereoreverse.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\sdl\SDL_effects_internal.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\sdl\SDL_endian.h
 # End Source File
 # Begin Source File
@@ -227,6 +207,18 @@ SOURCE=.\sdl\SDL_image.h
 # End Source File
 # Begin Source File
 
+SOURCE=.\sdl\SDL_mixer.c
+# End Source File
+# Begin Source File
+
+SOURCE=.\sdl\SDL_mixer.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sdl\SDL_music.c
+# End Source File
+# Begin Source File
+
 SOURCE=.\sdl\SDL_surface.c
 # End Source File
 # Begin Source File
@@ -248,6 +240,10 @@ SOURCE=.\sdl\SDL_ttf.h
 # Begin Source File
 
 SOURCE=.\sdl\SDL_video.h
+# End Source File
+# Begin Source File
+
+SOURCE=.\sdl\SDL_wavestream.c
 # End Source File
 # Begin Source File
 
