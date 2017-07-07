@@ -4,6 +4,7 @@
 *.opt
 Debug/
 Release/
+output/*.bmp
 
 # Object files
 *.o

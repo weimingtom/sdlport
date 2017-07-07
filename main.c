@@ -329,8 +329,8 @@ void init()
 		MY_Rmask, MY_Gmask, MY_Bmask, MY_Amask
 		);
 	//test_bmp(screen);
-	//test_ttf(screen);
-	test_image(screen);
+	test_ttf(screen);
+	//test_image(screen);
 	if (SDL_AudioInit(NULL) < 0) 
 	{
 		fprintf(stderr, "Could not initialize SDL audio\n");
