@@ -124,6 +124,7 @@ void test_ttf(SDL_Surface* screen)
 		int j;
 			
 		//, *backcol
+		//NOTE: glyph.pixel32 = (font.a or 0xff(fillrect)) | forecol.r | forecol.g | forecol.b 
 		glyph = TTF_RenderGlyph_Blended(font, (uint16_t)i, *forecol);
 		if (glyph) {
 			int size = glyph->w * glyph->h * 3;
@@ -151,6 +152,110 @@ void test_ttf(SDL_Surface* screen)
 clean_end:
 	TTF_Quit();
 }
+
+void test_ttf2(SDL_Surface* screen)
+{
+	int useBlend = 1; //FIXME:only for debug //FIXME: only useBlend == 1 is normal
+	int useSolid = 0; 
+	const char * str = "hello";
+	TTF_Font *font;
+	const char *fontname = DEFAULT_FONTNAME;
+	int ptsize = DEFAULT_PTSIZE;
+	int renderstyle = TTF_STYLE_NORMAL; 
+	SDL_Color white = { 0xFF, 0xFF, 0xFF, 0 };
+	SDL_Color black = { 0x00, 0x00, 0x00, 0 };
+	SDL_Color *forecol = &black;
+	SDL_Color *backcol = &white;
+	SDL_Rect sr, ds;
+	
+	TTF_Init();
+	font = TTF_OpenFont(fontname, ptsize);
+	if (font == NULL) {
+		fprintf(stderr, "Couldn't load %d pt font from %s\n", 
+			ptsize, fontname);
+		goto clean_end;
+	}
+	TTF_SetFontStyle(font, renderstyle);
+	{
+		SDL_Surface* glyph = NULL;
+		SDL_Surface *glyph2 = NULL;
+		int j;
+			
+		
+		if (useBlend)
+		{
+			//, *backcol
+			//NOTE: glyph.pixel32 = (font.a or 0xff(fillrect)) | forecol.r | forecol.g | forecol.b 
+			glyph = TTF_RenderText_Blended(font, str, *forecol);
+		}
+		else if (useSolid)
+		{
+			glyph = TTF_RenderText_Solid(font, str, *forecol);
+		}
+		else
+		{
+			glyph = TTF_RenderText_Shaded(font, str, *forecol, *backcol);
+		}
+		if (glyph) {
+			int size = glyph->w * glyph->h * 4;
+			unsigned char * data = (unsigned char *)malloc(size);
+			memset(data, 0, size);
+			for (j = 0; j < glyph->w * glyph->h; j++)
+			{
+				unsigned char * p = (unsigned char *)glyph->pixels;
+				if (useBlend)
+				{
+					//only alpha, igore rgb
+					*(data + j * 4 + 0) = forecol->r;
+					*(data + j * 4 + 1) = forecol->g;
+					*(data + j * 4 + 2) = forecol->b;
+					*(data + j * 4 + 3) = *(p + j * 4 + 3);
+				}
+				else if (useSolid)
+				{
+					fprintf(stdout, ">>> %x\n", *(p + j + 0)); 
+					//not success
+					*(data + j * 4 + 0) = *(p + j / 8 + 0) ? 0xff : 0x00;
+					*(data + j * 4 + 1) = *(p + j / 8 + 0) ? 0xff : 0x00;
+					*(data + j * 4 + 2) = *(p + j / 8 + 0) ? 0xff : 0x00;
+					*(data + j * 4 + 3) = 255;
+				}
+				else
+				{
+					//not success
+					*(data + j * 4 + 0) = 255 - *(p + j * 1 + 0);
+					*(data + j * 4 + 1) = 255 - *(p + j * 1 + 0);
+					*(data + j * 4 + 2) = 255 - *(p + j * 1 + 0);
+					*(data + j * 4 + 3) = 255;
+				}
+			}
+			glyph2 = SDL_CreateRGBSurfaceFrom(data,
+				glyph->w, glyph->h, 32, 4 * glyph->w,
+				MY_Rmask, MY_Gmask, MY_Bmask, MY_Amask
+				);
+			if (glyph2)
+			{
+				sr.x = 0;
+				sr.y = 0;
+				sr.w = glyph2->w;
+				sr.h = glyph2->h;
+				
+				ds.x = 200;
+				ds.y = 200;
+				ds.w = glyph2->w;
+				ds.h = glyph2->h;
+				//SDL_SoftStretch(glyph2, &sr, screen, &ds);
+				SDL_BlitSurface(glyph2, &sr, screen, &ds);
+			}
+
+			SDL_FreeSurface(glyph2);
+			free(data);
+		}
+	}
+clean_end:
+	TTF_Quit();
+}
+
 
 void image_swap_rgb(SDL_Surface *screen)
 {

@@ -173,8 +173,8 @@ extern int SDL_FillRect(SDL_Surface *dst,
 extern int SDL_SetColorKey(SDL_Surface *surface, 
 			uint32_t flag, uint32_t key);
 
-
-
+//FIXME: SDL_SaveBMP(glyph, outname);
+//dummy: use dumpBMPRaw(outname, glyph2->pixels, glyph2->w, glyph2->h, 1);
 
 /*=====================*/
 

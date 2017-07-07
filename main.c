@@ -6,6 +6,7 @@
 #include <GL/glut.h>
 #include "SDL_video.h"
 #include "SDL_audio.h"
+#include "SDL_ext_pixel.h"
 #include "test.h"
 
 #define TIMER_MILLIS ((int)(1000 / 60))
@@ -74,8 +75,8 @@ void display(void)
 	SDL_LockSurface(screen);
 	//dumpBMPRaw("image1_out.bmp", screen->pixels, screen->w, screen->h);
 	//color depth
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 
-		screen->w, screen->h, 0, GL_RGB, GL_UNSIGNED_BYTE, 
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB/*GL_RGBA*/, 
+		screen->w, screen->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, 
 		screen->pixels);
 	SDL_UnlockSurface(screen);
 	
@@ -325,11 +326,13 @@ int initEnvironment(void)
 void init()
 {
     screen = SDL_CreateRGBSurface(0,
-		640, 480, 24,
+		640, 480, 32,
 		MY_Rmask, MY_Gmask, MY_Bmask, MY_Amask
 		);
+	SDL_ext_fillRectangle(screen, 0xCC, 0xCC, 0xCC, 0xff, 0, 0, screen->w, screen->h); 
 	//test_bmp(screen);
-	test_ttf(screen);
+	//test_ttf(screen);
+	test_ttf2(screen);
 	//test_image(screen);
 	if (SDL_AudioInit(NULL) < 0) 
 	{

@@ -953,8 +953,10 @@ SDL_Surface *TTF_RenderUNICODE_Solid(TTF_Font *font,
 				(row+glyph->yoffset) * textbuf->pitch +
 				xstart + glyph->minx;
 			src = current->buffer + row * current->pitch;
-
+			
 			for ( col=width; col>0 && dst < dst_check; --col ) {
+				//fprintf(stdout, "<<< %x\n", *src); 
+				//*dst = 0;
 				*dst++ |= *src++;
 			}
 		}
