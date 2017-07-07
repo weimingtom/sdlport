@@ -1,3 +1,10 @@
+*.ncb
+*.plg
+*.aps
+*.opt
+Debug/
+Release/
+
 # Object files
 *.o
 *.ko
