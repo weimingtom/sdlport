@@ -333,7 +333,7 @@ void init()
 	//test_bmp(screen);
 	//test_ttf(screen);
 	test_ttf2(screen);
-	//test_image(screen);
+	test_image(screen);
 	if (SDL_AudioInit(NULL) < 0) 
 	{
 		fprintf(stderr, "Could not initialize SDL audio\n");

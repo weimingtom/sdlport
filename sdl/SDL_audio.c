@@ -528,7 +528,7 @@ static uint16_t SDL_ParseAudioFormat(const char *string)
 		}
 		if ( strcmp(string, "MSB") == 0
 #if SDL_BYTEORDER == SDL_BIG_ENDIAN
-		     || SDL_strcmp(string, "SYS") == 0
+		     || strcmp(string, "SYS") == 0
 #endif
 		    ) {
 			format |= 0x1000;

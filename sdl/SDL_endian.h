@@ -28,7 +28,8 @@ extern "C" {
 
 #define SDL_LIL_ENDIAN	1234
 #define SDL_BIG_ENDIAN	4321
-#define SDL_BYTEORDER 1234
+#define SDL_BYTEORDER 1234 //FIXME:
+//#define SDL_BYTEORDER 4321
 
 #ifdef __cplusplus
 }

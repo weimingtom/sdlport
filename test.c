@@ -25,11 +25,19 @@ void test_bmp(SDL_Surface* screen)
 	if (data)
 	{
 		SDL_Surface* surface;
-		//
-		//int i, j;
-
-		surface = SDL_CreateRGBSurfaceFrom(data,
-			g_TextureWidth, g_TextureHeight, 24, 3 * g_TextureWidth,
+		int j;
+		int size = g_TextureWidth * g_TextureHeight * 4;
+		unsigned char * data2 = (unsigned char *)malloc(size);
+		memset(data2, 0, size);
+		for (j = 0; j < (int)(g_TextureWidth * g_TextureHeight); j++)
+		{
+			*(data2 + j * 4 + 0) = *(data + j * 3 + 0);
+			*(data2 + j * 4 + 1) = *(data + j * 3 + 1);
+			*(data2 + j * 4 + 2) = *(data + j * 3 + 2);
+			*(data2 + j * 4 + 3) = 0xff;
+		}
+		surface = SDL_CreateRGBSurfaceFrom(data2,
+			g_TextureWidth, g_TextureHeight, 32, 4 * g_TextureWidth,
 			MY_Rmask, MY_Gmask, MY_Bmask, MY_Amask
 			);
 		//SDL_SaveBMP(surface, "image1_out.bmp");
@@ -92,6 +100,7 @@ void test_bmp(SDL_Surface* screen)
 	}
 }
 
+//not used, see test_ttf2, only 24bits
 void test_ttf(SDL_Surface* screen)
 {
 	TTF_Font *font;
@@ -156,7 +165,7 @@ clean_end:
 void test_ttf2(SDL_Surface* screen)
 {
 	int useBlend = 1; //FIXME:only for debug //FIXME: only useBlend == 1 is normal
-	int useSolid = 0; 
+	int useSolid = 1; 
 	const char * str = "hello";
 	TTF_Font *font;
 	const char *fontname = DEFAULT_FONTNAME;
@@ -213,11 +222,13 @@ void test_ttf2(SDL_Surface* screen)
 				}
 				else if (useSolid)
 				{
-					fprintf(stdout, ">>> %x\n", *(p + j + 0)); 
+					//fprintf(stdout, ">>> %x\n", *(p + j + 0)); 
 					//not success
-					*(data + j * 4 + 0) = *(p + j / 8 + 0) ? 0xff : 0x00;
-					*(data + j * 4 + 1) = *(p + j / 8 + 0) ? 0xff : 0x00;
-					*(data + j * 4 + 2) = *(p + j / 8 + 0) ? 0xff : 0x00;
+					int alpha = ((p[j / 8] >> ((j ^ 7) & 7)) & 1) ? 0xff : 0x00;
+					//int alpha = *(p + j / 8) ? 0xff : 0x00;
+					*(data + j * 4 + 0) = alpha;
+					*(data + j * 4 + 1) = alpha;
+					*(data + j * 4 + 2) = alpha;
 					*(data + j * 4 + 3) = 255;
 				}
 				else
@@ -284,6 +295,11 @@ void image_swap_rgb(SDL_Surface *screen)
 
 			case 4:
 				//FIXME:
+				{
+					uint8_t temp = dst[x * 4 + 0];
+					dst[x * 4 + 0] = dst[x * 4 + 2];
+					dst[x * 4 + 2] = temp;
+				}
 				break;
 			}
 		}
@@ -295,9 +311,33 @@ void test_image(SDL_Surface* screen)
 {
 	SDL_Surface* surface = IMG_Load("image1.bmp");	
 	SDL_Rect sr, ds;
+	int j;
+	SDL_Surface* surface2 = NULL;
+		
 	if (surface)
 	{
-		image_swap_rgb(surface);
+		int size = surface->w * surface->h * 4;
+		unsigned char * data = (unsigned char *)surface->pixels;
+		unsigned char * data2 = (unsigned char *)malloc(size);
+		
+		memset(data2, 0, size);
+		for (j = 0; j < (int)(surface->w * surface->h); j++)
+		{
+			*(data2 + j * 4 + 0) = *(data + j * 3 + 0);
+			*(data2 + j * 4 + 1) = *(data + j * 3 + 1);
+			*(data2 + j * 4 + 2) = *(data + j * 3 + 2);
+			*(data2 + j * 4 + 3) = 0xff;
+		}
+		surface2 = SDL_CreateRGBSurfaceFrom(data2,
+			surface->w, surface->h, 32, 4 * surface->w,
+			MY_Rmask, MY_Gmask, MY_Bmask, MY_Amask
+			);
+	}
+
+
+	if (surface2)
+	{
+		image_swap_rgb(surface2);
 		sr.x = 0;
 		sr.y = 0;
 		sr.w = surface->w;
@@ -307,7 +347,7 @@ void test_image(SDL_Surface* screen)
 		ds.y = 100;
 		ds.w = surface->w;
 		ds.h = surface->h;
-		SDL_SoftStretch(surface, &sr, screen, &ds);
+		SDL_SoftStretch(surface2, &sr, screen, &ds);
 	}
 }
 
